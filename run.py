@@ -1,25 +1,34 @@
 import pygame
+import random
 from calculations import *
 
 keepSymulation = True
 
+def generator_of_mols(n: int) -> list:
+    mols = []
+    for _ in range(n):
+        mol = [[random.randint(0,800), random.randint(0,800)], [random.uniform(-1, 1), random.uniform(-1, 1)]]
+        mols.append(mol)
+    return mols
+
 if __name__ == '__main__':
     pygame.init()
-    window = pygame.display.set_mode((400,400))
+    window = pygame.display.set_mode((800, 800))
 
     clock = pygame.time.Clock()
 
-    Temp = 273 # K
+    scale = 10 ** 12
 
+    Temp = 300  # K
     Time = 0.0
-    Time_form_last_calcs = 0.0
     Time_step_per_frame = 1.0
-    time_step_per_calcs = 30.0
+    time_step_per_calcs = 1.0
 
-    y = 1e-9
-    m = 1e-21
+    y = 1e-9  # Współczynnik oporu
+    m = 1e-21  # Masa cząsteczki
 
-    particle_position_vector: list[list[float], list[float]] = [[[200.0, 200.0], 1.0]]
+    # Lista z pozycją i prędkością cząsteczek
+    particle_position_vector: list[list[float], list[float]] = generator_of_mols(100)
 
     while keepSymulation:
         for event in pygame.event.get():
@@ -28,28 +37,41 @@ if __name__ == '__main__':
 
         window.fill("white")
 
+        # Symulacja czasu
         Time += Time_step_per_frame
-        Time_form_last_calcs += Time_step_per_frame
 
-        if Time == time_step_per_calcs:
-            for particle in particle_position_vector:
-                #dx = movement_equation(Time_step_per_frame, 1, get_n())
-                #dy = movement_equation(Time_step_per_frame, 1, get_n())
-                
-                #velocity_langevin_equation(v: float, d_t: float, y: float, T: float, n: float, m: float)
-                xv = velocity_langevin_equation(particle[0][0], 
-                                                time_step_per_calcs, 
-                                                y, Temp, random.random(), m)
-                
-                particle[1] = xv
-                
-                particle[0][0] += dx
-                particle[0][1] += dy
-
-            Time_form_last_calcs = 0.0
-
+        # Obliczenia wykonywane w każdym kroku czasowym
         for particle in particle_position_vector:
-            pygame.draw.circle(window, "black", (particle[0][0], particle[0][1]), 5)
+            # Aktualizacja prędkości w kierunku x
+            v_x = velocity_langevin_equation(particle[1][0], 
+                                             time_step_per_calcs, 
+                                             y, Temp, m)
+            # Aktualizacja prędkości w kierunku y
+            v_y = velocity_langevin_equation(particle[1][1], 
+                                             time_step_per_calcs, 
+                                             y, Temp, m)
+
+            # Przemieszczenie na podstawie prędkości
+            dx = v_x * time_step_per_calcs
+            dy = v_y * time_step_per_calcs
+
+            # Zaktualizuj pozycję cząsteczki
+            particle[0][0] += dx
+            particle[0][1] += dy
+
+            # Aktualizacja prędkości w liście
+            particle[1][0] = v_x / scale
+            particle[1][1] = v_y / scale
+
+        # Rysowanie cząsteczki
+        for particle in particle_position_vector:
+            y_pos = particle[0][0]
+            x_pos = particle[0][1]
+
+            print(f"x = {x_pos}, y = {y_pos}")
+
+            if 0 <= x_pos < 800 and 0 <= y_pos < 800:
+                pygame.draw.circle(window, "black", (particle[0][0], particle[0][1]), 5)
 
         clock.tick(60)
         pygame.display.flip()
