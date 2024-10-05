@@ -1,5 +1,6 @@
 import pygame
 import random
+import json
 from calculations import *
 
 keepSymulation = True
@@ -12,23 +13,25 @@ def generator_of_mols(n: int) -> list:
     return mols
 
 if __name__ == '__main__':
+    f = open("config.json", "r")
+    settings = json.load(f)
     pygame.init()
     window = pygame.display.set_mode((800, 800))
 
     clock = pygame.time.Clock()
 
-    scale = 10 ** 12
+    scale = 10 ** settings["scale"]
 
-    Temp = 300  # K
+    Temp = settings['temp_in_k']  # K
     Time = 0.0
     Time_step_per_frame = 1.0
     time_step_per_calcs = 1.0
 
-    y = 1e-9  # Współczynnik oporu
-    m = 1e-21  # Masa cząsteczki
+    y = float(settings['ressistance_coeficient'])  # Współczynnik oporu
+    m = float(settings['particle_mass'])  # Masa cząsteczki
 
     # Lista z pozycją i prędkością cząsteczek
-    particle_position_vector: list[list[float], list[float]] = generator_of_mols(100)
+    particle_position_vector: list[list[float], list[float]] = generator_of_mols(settings['num_of_particles'])
 
     while keepSymulation:
         for event in pygame.event.get():
