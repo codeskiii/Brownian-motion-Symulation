@@ -1,6 +1,6 @@
 {
-    "scale":12,
-    "temp_in_k":300,
+    "scale":11.999,
+    "temp_in_k":0,
     "ressistance_coeficient":"1e-9",
     "particle_mass":"1e-21",
     "num_of_particles":100

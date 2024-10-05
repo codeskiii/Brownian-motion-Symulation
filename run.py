@@ -48,11 +48,11 @@ if __name__ == '__main__':
             # Aktualizacja prędkości w kierunku x
             v_x = velocity_langevin_equation(particle[1][0], 
                                              time_step_per_calcs, 
-                                             y, Temp, m)
+                                             y, Temp, m) / scale
             # Aktualizacja prędkości w kierunku y
             v_y = velocity_langevin_equation(particle[1][1], 
                                              time_step_per_calcs, 
-                                             y, Temp, m)
+                                             y, Temp, m) / scale
 
             # Przemieszczenie na podstawie prędkości
             dx = v_x * time_step_per_calcs
@@ -63,8 +63,8 @@ if __name__ == '__main__':
             particle[0][1] += dy
 
             # Aktualizacja prędkości w liście
-            particle[1][0] = v_x / scale
-            particle[1][1] = v_y / scale
+            particle[1][0] = v_x 
+            particle[1][1] = v_y 
 
         # Rysowanie cząsteczki
         for particle in particle_position_vector:
