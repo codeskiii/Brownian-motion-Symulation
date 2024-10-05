@@ -1,12 +1,12 @@
 # Brownian motion symulation
 ## Instaling
 
-* 1. install dependencies
+* install dependencies
 
 ```
 pip install -r requirements.txt
 ```
-* 2. run run.py
+* run run.py
 
 ```
 python run.py
